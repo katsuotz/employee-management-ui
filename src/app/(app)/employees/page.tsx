@@ -5,6 +5,8 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VirtualizedDataTable } from '@/components/ui/virtualized-data-table';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
+import { Plus } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,6 +23,7 @@ import { employeeService, Employee } from '@/services/employeeService';
 import { Trash2 } from 'lucide-react';
 
 export default function EmployeesPage() {
+  const router = useRouter();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -175,7 +178,19 @@ export default function EmployeesPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Employee Management</span>
+            <div className="flex items-center space-x-4">
+              <span>Employee Management</span>
+              <Button
+                onClick={() => router.push('/employees/create')}
+                className="flex items-center space-x-2"
+              >
+                <Plus className="h-4 w-4" />
+                <span>Create Employee</span>
+              </Button>
+            </div>
+            <div className="text-sm font-normal text-muted-foreground">
+              Total: {total.toLocaleString()} employees
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>
