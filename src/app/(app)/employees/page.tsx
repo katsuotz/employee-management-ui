@@ -193,8 +193,10 @@ export default function EmployeesPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between space-x-4">
               <span>Employee Management</span>
+            </div>
+            <div className="flex items-center space-x-4">
               <Button
                 onClick={() => router.push('/employees/create')}
                 className="flex items-center space-x-2"

@@ -34,7 +34,7 @@ export default function DashboardLayout({
         <NotificationProvider>
           <NotificationInitializer>
             <Navigation />
-            <main className="min-h-screen bg-background">
+            <main className="min-h-screen bg-background container mx-auto pt-8">
               {children}
             </main>
             <Toaster />
