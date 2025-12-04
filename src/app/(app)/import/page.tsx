@@ -165,19 +165,20 @@ export default function ImportPage() {
                   CSV files up to 10MB
                 </span>
               </label>
-              <input
-                ref={fileInputRef}
-                id="file-upload"
-                type="file"
-                accept=".csv"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
+                <input
+                  data-testid="csv-input"
+                  ref={fileInputRef}
+                  id="file-upload"
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileSelect}
+                  className="sr-only"
+                />
             </div>
             
             {file && (
               <div className="mt-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600" data-testid="file-selected">
                   Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                 </p>
               </div>
@@ -200,6 +201,7 @@ export default function ImportPage() {
       {/* Progress Dialog */}
       <Dialog 
         open={showProgressModal} 
+        data-testid="progress-dialog"
         onOpenChange={(open) => {
           // Prevent closing during processing
           if (importProgress?.status === 'processing') {
@@ -234,7 +236,9 @@ export default function ImportPage() {
               {/* Progress Bar */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>{importProgress.progress.toFixed(1)}%</span>
+                 <span data-testid="progress-percent">
+                    {importProgress.progress.toFixed(1)}%
+                </span>
                   <span className="text-gray-600">{getStatusText()}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">

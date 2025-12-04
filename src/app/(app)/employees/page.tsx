@@ -33,7 +33,7 @@ export default function EmployeesPage() {
     search: string;
     sort: string;
   }>({
-    page: 0,
+    page: 1,
     limit: 10,
     search: '',
     sort: 'created_at:desc'
