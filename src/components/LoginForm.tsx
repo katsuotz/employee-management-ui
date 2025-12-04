@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { toast } from 'sonner';
-import { authService, LoginCredentials } from '@/services/authService';
+import { authService } from '@/services/authService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -76,9 +76,7 @@ export default function LoginForm() {
       toast.success('Login successful! Redirecting...');
 
       // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 1000);
+      window.location.href = '/dashboard';
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Login failed');
     } finally {
