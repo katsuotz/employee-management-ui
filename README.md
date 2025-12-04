@@ -40,19 +40,12 @@ Before running this application, make sure you have:
 
 ## Installation
 
-### 1. Install pnpm ( if not already installed:
+### 1. Clone and install dependencies:
 ```bash
-npm install -g pnpm
-```
-
-### 2. Clone and install dependencies:
-```bash
-git clone <repository-url>
-cd frontend
 pnpm install
 ```
 
-### 3. Set up environment variables:
+### 2. Set up environment variables:
 ```bash
 cp .env.example .env
 ```
@@ -63,32 +56,7 @@ Then edit `.env` and configure your settings:
 
 ### API Configuration
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:5000
-NEXT_PUBLIC_WS_URL=ws://localhost:5000
-```
-
-### Application Configuration
-```env
-NODE_ENV=development
-NEXT_PUBLIC_APP_NAME=Employee Management System
-NEXT_PUBLIC_APP_VERSION=1.0.0
-```
-
-### Authentication Configuration
-```env
-NEXT_PUBLIC_JWT_EXPIRES_IN=24h
-```
-
-### File Upload Configuration
-```env
-NEXT_PUBLIC_MAX_FILE_SIZE=10485760
-NEXT_PUBLIC_ALLOWED_FILE_TYPES=.csv
-```
-
-### Development Configuration
-```env
-NEXT_PUBLIC_DEV_MODE=true
-NEXT_PUBLIC_DEBUG_MODE=false
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
 ```
 
 ## Running the Application
