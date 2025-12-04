@@ -1,28 +1,54 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VirtualizedDataTable } from '@/components/ui/virtualized-data-table';
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { employeeService, Employee } from '@/services/employeeService';
+import { Trash2 } from 'lucide-react';
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  const [currentParams, setCurrentParams] = useState<{
+    page: number;
+    limit: number;
+    search: string;
+    sort: string;
+  }>({
+    page: 0,
+    limit: 10,
+    search: '',
+    sort: 'created_at:desc'
+  });
 
   // Fetch employees from API
   const fetchEmployees = async (params: { page: number; limit: number; search: string; sort: string }) => {
     try {
       setLoading(true);
+      setCurrentParams(params);
       const response = await employeeService.getEmployees({
         page: params.page + 1,
         limit: params.limit,
         search: params.search,
         sort: params.sort,
       });
-      
+
       setEmployees(response.employees);
       setTotal(response.pagination.totalItems);
     } catch (error) {
@@ -30,6 +56,23 @@ export default function EmployeesPage() {
       console.error('Error fetching employees:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Delete employee
+  const handleDeleteEmployee = async (employee: Employee) => {
+    try {
+      setDeleteLoading(employee.id);
+      await employeeService.deleteEmployee(employee.id);
+      toast.success(`Employee "${employee.name}" deleted successfully`);
+
+      // Refresh the employee list with current parameters
+      await fetchEmployees(currentParams);
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      toast.error('Failed to delete employee');
+    } finally {
+      setDeleteLoading(null);
     }
   };
 
@@ -77,8 +120,54 @@ export default function EmployeesPage() {
         ),
         enableSorting: true,
       },
+      {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => {
+          const employee = row.original;
+          return (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={deleteLoading === employee.id}
+                >
+                  {deleteLoading === employee.id ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                  ) : (
+                    <Trash2 className="h-4 w-4" />
+                  )}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete the employee
+                    <span className="font-semibold"> &#34;{employee.name}&#34; </span>
+                    and all associated data.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => handleDeleteEmployee(employee)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          );
+        },
+        enableSorting: false,
+        size: 80,
+      },
     ],
-    []
+    [deleteLoading]
   );
 
   return (

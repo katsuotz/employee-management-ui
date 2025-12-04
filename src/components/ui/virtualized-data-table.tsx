@@ -11,7 +11,6 @@ import {
   flexRender,
   ColumnDef,
   SortingState,
-  ColumnFiltersState,
 } from '@tanstack/react-table';
 import { Button } from './button';
 import { Input } from './input';
@@ -60,11 +59,10 @@ export function VirtualizedDataTable<TData, TValue>({
   pageSizeOptions = [10, 25, 50, 100, 1000, 10000],
 }: VirtualizedDataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState('');
   const [pagination, setPagination] = useState({
     pageIndex: 0,
-    pageSize: 50,
+    pageSize: 10,
   });
 
   const tableContainerRef = useRef<HTMLDivElement>(null);
@@ -78,12 +76,10 @@ export function VirtualizedDataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: setPagination,
     state: {
       sorting: enableSorting ? sorting : [],
-      columnFilters,
       globalFilter,
       pagination: enablePagination ? pagination : { pageIndex: 0, pageSize: data.length },
     },
@@ -190,7 +186,7 @@ export function VirtualizedDataTable<TData, TValue>({
                             variant="ghost"
                             size="sm"
                             onClick={() => header.column.toggleSorting(header.column.getIsSorted() === 'asc')}
-                            className="px-0"
+                            className="px-0!"
                           >
                             {flexRender(
                               header.column.columnDef.header,
