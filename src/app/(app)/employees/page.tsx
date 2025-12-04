@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { employeeService, Employee } from '@/services/employeeService';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Edit } from 'lucide-react';
 
 export default function EmployeesPage() {
   const router = useRouter();
@@ -118,7 +118,12 @@ export default function EmployeesPage() {
         header: 'Salary',
         cell: ({ row }) => (
           <div className="font-medium">
-            ${row.getValue('salary')?.toLocaleString()}
+              {new Intl.NumberFormat("id-ID", {
+                style: "currency",
+                currency: "IDR",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(row.getValue("salary"))}
           </div>
         ),
         enableSorting: true,
@@ -129,48 +134,59 @@ export default function EmployeesPage() {
         cell: ({ row }) => {
           const employee = row.original;
           return (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  disabled={deleteLoading === employee.id}
-                >
-                  {deleteLoading === employee.id ? (
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
-                  ) : (
-                    <Trash2 className="h-4 w-4" />
-                  )}
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete the employee
-                    <span className="font-semibold"> &#34;{employee.name}&#34; </span>
-                    and all associated data.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => handleDeleteEmployee(employee)}
-                    className="bg-red-600 hover:bg-red-700"
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => router.push(`/employees/${employee.id}/edit`)}
+                disabled={deleteLoading === employee.id}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+              
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    disabled={deleteLoading === employee.id}
                   >
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+                    {deleteLoading === employee.id ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete the employee
+                      <span className="font-semibold"> &#34;{employee.name}&#34; </span>
+                      and all associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => handleDeleteEmployee(employee)}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           );
         },
         enableSorting: false,
-        size: 80,
+        size: 120,
       },
     ],
-    [deleteLoading]
+    [deleteLoading, router]
   );
 
   return (

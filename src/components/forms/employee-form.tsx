@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
-import { employeeService } from '@/services/employeeService';
+import { employeeService, Employee } from '@/services/employeeService';
 import { useRouter } from 'next/navigation';
 import { Label } from '@/components/ui/label';
 import * as z from 'zod';
@@ -19,28 +19,33 @@ interface EmployeeFormData {
 
 // Zod validation schema (matches backend validation)
 const employeeSchema = z.object({
-  name: z.string().max(100, 'Name maximum length is 100 characters'),
-  age: z.number().nullable().refine((val) => val !== null && Number.isInteger(val), {
-    message: 'Age is required and must be a number',
+  name: z.string().min(1, 'Name is required').max(100, 'Name maximum length is 100 characters'),
+  age: z.number().nullable().refine((val) => val !== null, {
+    message: 'Age is required',
+  }).refine((val) => val !== null && Number.isInteger(val), {
+    message: 'Age must be a whole number',
   }),
-  position: z.string().max(50, 'Position maximum length is 50 characters'),
-  salary: z.number().nullable().refine((val) => val !== null && val >= 0, {
-    message: 'Salary is required and must be a positive number',
+  position: z.string().min(1, 'Position is required').max(50, 'Position maximum length is 50 characters'),
+  salary: z.number().nullable().refine((val) => val !== null, {
+    message: 'Salary is required',
+  }).refine((val) => val !== null && val >= 0, {
+    message: 'Salary must be a positive number',
   }),
 });
 
 interface EmployeeFormProps {
+  employee?: Employee;
   onSuccess?: () => void;
 }
 
-export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
+export function EmployeeForm({ employee, onSuccess }: EmployeeFormProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const [formData, setFormData] = useState<EmployeeFormData>({
-    name: '',
-    age: null,
-    position: '',
-    salary: null,
+    name: employee?.name || '',
+    age: employee?.age || null,
+    position: employee?.position || '',
+    salary: employee?.salary ? parseInt(employee.salary.toString()) : null,
   });
   const [errors, setErrors] = useState<Partial<Record<keyof EmployeeFormData, string>>>({});
 
@@ -92,12 +97,22 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
         salary: formData.salary === null ? 0 : formData.salary,
       };
       
-      const response = await employeeService.createEmployee(submissionData);
-      
-      toast.success(`Employee creation started! Job ID: ${response.jobId}`, {
-        description: 'Your employee is being processed in the background.',
-        duration: 5000,
-      });
+      if (employee) {
+        // Update existing employee
+        const updatedEmployee = await employeeService.updateEmployee(employee.id, submissionData);
+        if (updatedEmployee) {
+          toast.success(`Employee "${updatedEmployee.name}" updated successfully`);
+        } else {
+          throw new Error('Failed to update employee');
+        }
+      } else {
+        // Create new employee
+        const response = await employeeService.createEmployee(submissionData);
+        toast.success(`Employee creation started! Job ID: ${response.jobId}`, {
+          description: 'Your employee is being processed in the background.',
+          duration: 5000,
+        });
+      }
       
       // Call success callback or navigate back
       if (onSuccess) {
@@ -106,8 +121,8 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
         router.push('/employees');
       }
     } catch (error) {
-      console.error('Error creating employee:', error);
-      toast.error('Failed to create employee. Please try again.');
+      console.error('Error saving employee:', error);
+      toast.error(`Failed to ${employee ? 'update' : 'create'} employee. Please try again.`);
     } finally {
       setLoading(false);
     }
@@ -116,13 +131,13 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
   return (
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>Create New Employee</CardTitle>
+        <CardTitle>{employee ? 'Edit Employee' : 'Create New Employee'}</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Full Name
+              Full Name <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
@@ -139,7 +154,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="age" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Age
+                Age <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="age"
@@ -148,6 +163,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
                 value={formData.age || ''}
                 onChange={(e) => handleInputChange('age', e.target.value)}
                 className={errors.age ? 'border-red-500' : ''}
+                step="1"
               />
               {errors.age && (
                 <p className="text-sm text-red-500">{errors.age}</p>
@@ -156,7 +172,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
 
             <div className="space-y-2">
               <Label htmlFor="salary" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Salary
+                Salary <span className="text-red-500">*</span>
               </Label>
               <Input
                 id="salary"
@@ -165,6 +181,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
                 value={formData.salary || ''}
                 onChange={(e) => handleInputChange('salary', e.target.value)}
                 className={errors.salary ? 'border-red-500' : ''}
+                step="1"
               />
               {errors.salary && (
                 <p className="text-sm text-red-500">{errors.salary}</p>
@@ -174,7 +191,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="position" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Position
+              Position <span className="text-red-500">*</span>
             </Label>
             <Input
               id="position"
@@ -198,7 +215,7 @@ export function EmployeeForm({ onSuccess }: EmployeeFormProps) {
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Creating...' : 'Create Employee'}
+              {loading ? (employee ? 'Updating...' : 'Creating...') : (employee ? 'Update Employee' : 'Create Employee')}
             </Button>
           </div>
         </form>
