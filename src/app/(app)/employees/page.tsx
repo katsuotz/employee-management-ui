@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VirtualizedDataTable } from '@/components/ui/virtualized-data-table';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { Plus } from 'lucide-react';
+import { Plus, Upload, Edit, Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/alert-dialog';
 import { toast } from 'sonner';
 import { employeeService, Employee } from '@/services/employeeService';
-import { Trash2, Edit } from 'lucide-react';
 
 export default function EmployeesPage() {
   const router = useRouter();
@@ -202,6 +201,14 @@ export default function EmployeesPage() {
               >
                 <Plus className="h-4 w-4" />
                 <span>Create Employee</span>
+              </Button>
+              <Button
+                onClick={() => router.push('/import')}
+                variant="outline"
+                className="flex items-center space-x-2"
+              >
+                <Upload className="h-4 w-4" />
+                <span>Import CSV</span>
               </Button>
             </div>
           </CardTitle>
