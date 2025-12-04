@@ -204,9 +204,6 @@ export default function EmployeesPage() {
                 <span>Create Employee</span>
               </Button>
             </div>
-            <div className="text-sm font-normal text-muted-foreground">
-              Total: {total.toLocaleString()} employees
-            </div>
           </CardTitle>
         </CardHeader>
         <CardContent>

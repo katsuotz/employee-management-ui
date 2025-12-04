@@ -14,6 +14,7 @@ import {
   LogOut,
   Home,
 } from 'lucide-react';
+import { NotificationBell } from '@/components/NotificationBell';
 
 export default function Navigation() {
   const handleLogout = () => {
@@ -56,6 +57,8 @@ export default function Navigation() {
         </NavigationMenu>
 
         <div className="ml-auto flex items-center space-x-4">
+          <NotificationBell />
+          
           <div className="hidden md:flex items-center space-x-2">
             <span className="text-sm text-muted-foreground">Welcome,</span>
             <span className="text-sm font-medium">{user?.name || 'User'}</span>
