@@ -15,7 +15,7 @@ import {
   Home,
   Upload,
 } from 'lucide-react';
-import { NotificationBell } from '@/components/NotificationBell';
+import { NotificationBell } from '@/components/navigation/notification-bell';
 
 export default function Navigation() {
   const handleLogout = () => {

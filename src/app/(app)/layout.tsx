@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/navigation/navigation";
 import { NotificationProvider } from "@/contexts/NotificationContext";
-import { NotificationInitializer } from "@/components/NotificationInitializer";
+import { NotificationInitializer } from "@/components/navigation/notification-initializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

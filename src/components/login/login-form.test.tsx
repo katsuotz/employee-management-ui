@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
-import LoginForm from './LoginForm'
+import LoginForm from './login-form'
 import { authService } from '@/services/authService'
 
 // Mock the authService

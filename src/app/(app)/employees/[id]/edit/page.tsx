@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { EmployeeForm } from '@/components/forms/employee-form';
+import { EmployeeForm } from '@/components/employees/employee-form';
 import { employeeService, Employee } from '@/services/employeeService';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
