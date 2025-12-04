@@ -59,7 +59,7 @@ export function VirtualizedDataTable<TData, TValue>({
   pageSizeOptions = [10, 25, 50, 100, 1000, 10000],
 }: VirtualizedDataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [search, setSearch] = useState('');
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
@@ -76,11 +76,11 @@ export function VirtualizedDataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
     onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
+    onGlobalFilterChange: setSearch,
     onPaginationChange: setPagination,
     state: {
       sorting: enableSorting ? sorting : [],
-      globalFilter,
+      globalFilter: search,
       pagination: enablePagination ? pagination : { pageIndex: 0, pageSize: data.length },
     },
     manualPagination: !!onFetchData,
@@ -110,13 +110,13 @@ export function VirtualizedDataTable<TData, TValue>({
       onFetchData({
         page: pagination.pageIndex,
         limit: pagination.pageSize,
-        search: globalFilter,
+        search,
         sort: sortParam,
       });
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [globalFilter, sorting, pagination.pageIndex, pagination.pageSize]);
+  }, [search, sorting, pagination.pageIndex, pagination.pageSize]);
 
   return (
     <div className="space-y-4">
@@ -153,11 +153,11 @@ export function VirtualizedDataTable<TData, TValue>({
           
           {enableSearch && (
             <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={searchPlaceholder}
-                value={globalFilter ?? ''}
-                onChange={(e) => setGlobalFilter(String(e.target.value))}
+                value={search ?? ''}
+                onChange={(e) => setSearch(String(e.target.value))}
                 className="pl-8"
               />
             </div>
@@ -227,7 +227,7 @@ export function VirtualizedDataTable<TData, TValue>({
               <div className="text-center text-muted-foreground">
                 <div className="text-lg font-medium">No results found</div>
                 <div className="text-sm">
-                  {globalFilter ? 'Try adjusting your search criteria' : 'No data available'}
+                  {search ? 'Try adjusting your search criteria' : 'No data available'}
                 </div>
               </div>
             </div>
