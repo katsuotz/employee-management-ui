@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Check, X } from 'lucide-react';
+import { Bell, Check, } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { notificationApiService, Notification } from '@/services/notificationApiService';
 import { notificationService } from '@/services/notificationService';

@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { authService } from '@/services/authService';
 
 export default function DashboardPage() {
-  const [user, setUser] = useState(authService.getUser());
-  const [loading, setLoading] = useState(true);
+  const [user] = useState(authService.getUser());
 
   useEffect(() => {
     // Check if user is authenticated
@@ -20,23 +19,7 @@ export default function DashboardPage() {
       window.location.href = '/login';
       return;
     }
-
-    setUser(authService.getUser());
-    setLoading(false);
   }, []);
-
-  const handleLogout = () => {
-    authService.logout();
-    window.location.href = '/login';
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">

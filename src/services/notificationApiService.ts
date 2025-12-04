@@ -7,7 +7,7 @@ export interface Notification {
   type: string;
   read: boolean;
   jobId?: string;
-  metadata?: unknown;
+  metadata?: any;
   createdAt: string;
 }
 

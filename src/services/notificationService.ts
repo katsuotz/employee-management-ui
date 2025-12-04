@@ -1,16 +1,5 @@
 import { toast } from 'sonner';
 
-interface NotificationData {
-  id: string;
-  title: string;
-  message: string;
-  type: string;
-  read: boolean;
-  jobId?: string;
-  metadata?: unknown;
-  created_at: string;
-}
-
 interface SSEMessage {
   type: string;
   userId: string;
